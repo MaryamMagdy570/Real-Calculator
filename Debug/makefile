@@ -30,47 +30,47 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 LSS += \
-Calculator.lss \
+Real-Calculator.lss \
 
 FLASH_IMAGE += \
-Calculator.hex \
+Real-Calculator.hex \
 
 SIZEDUMMY += \
 sizedummy \
 
 
 # All Target
-all: Calculator.elf secondary-outputs
+all: Real-Calculator.elf secondary-outputs
 
 # Tool invocations
-Calculator.elf: $(OBJS) $(USER_OBJS)
+Real-Calculator.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AVR C Linker'
-	avr-gcc -Wl,-Map,Calculator.map -mmcu=atmega32 -o "Calculator.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	avr-gcc -Wl,-Map,Real-Calculator.map -mmcu=atmega32 -o "Real-Calculator.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-Calculator.lss: Calculator.elf
+Real-Calculator.lss: Real-Calculator.elf
 	@echo 'Invoking: AVR Create Extended Listing'
-	-avr-objdump -h -S Calculator.elf  >"Calculator.lss"
+	-avr-objdump -h -S Real-Calculator.elf  >"Real-Calculator.lss"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Calculator.hex: Calculator.elf
+Real-Calculator.hex: Real-Calculator.elf
 	@echo 'Create Flash image (ihex format)'
-	-avr-objcopy -R .eeprom -R .fuse -R .lock -R .signature -O ihex Calculator.elf  "Calculator.hex"
+	-avr-objcopy -R .eeprom -R .fuse -R .lock -R .signature -O ihex Real-Calculator.elf  "Real-Calculator.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-sizedummy: Calculator.elf
+sizedummy: Real-Calculator.elf
 	@echo 'Invoking: Print Size'
-	-avr-size --format=avr --mcu=atmega32 Calculator.elf
+	-avr-size --format=avr --mcu=atmega32 Real-Calculator.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(FLASH_IMAGE)$(ELFS)$(OBJS)$(ASM_DEPS)$(S_DEPS)$(SIZEDUMMY)$(S_UPPER_DEPS)$(LSS)$(C_DEPS) Calculator.elf
+	-$(RM) $(FLASH_IMAGE)$(ELFS)$(OBJS)$(ASM_DEPS)$(S_DEPS)$(SIZEDUMMY)$(S_UPPER_DEPS)$(LSS)$(C_DEPS) Real-Calculator.elf
 	-@echo ' '
 
 secondary-outputs: $(LSS) $(FLASH_IMAGE) $(SIZEDUMMY)

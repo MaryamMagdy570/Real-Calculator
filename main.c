@@ -71,13 +71,13 @@ void main(void)
 	CLCD_voidInit();
 
 	INIT_VARS();
-
+	/*******************************************/
 	GetExpression();
-
+	/*******************************************/
 	CleanExpressionAndCheckErrors();
-
+	/*******************************************/
 	TranslateExpression();
-
+	/*******************************************/
 
 	for(u8 i =0; i<Counter; i++)
 	{
@@ -106,15 +106,9 @@ void main(void)
 		i--;
 	}
 
-/*
-	CLCD_voidGoToRowColumn(2,0);
-	CLCD_voidSendDecimalNumber(NumbersArray[0]);
-	for(int m=0;m<Counter; m++){
-	CLCD_voidSendData(OperationsArray[m]);
-	CLCD_voidSendDecimalNumber(NumbersArray[m+1]);}
-*/
-
+/*******************************************/
 	PerformAdditionAndSubtraction();
+/*******************************************/
 
 	CLCD_voidGoToRowColumn(3,13);
 
