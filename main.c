@@ -79,12 +79,10 @@ void main(void)
 
 	GetExpression();
 
-	CLCD_voidGoToRowColumn(1,0);
-	PRINT();
 
 	CleanExpressionAndCheckErrors();
 
-	CLCD_voidGoToRowColumn(2,0);
+	CLCD_voidGoToRowColumn(1,0);
 	PRINT();
 
 	TranslateExpression();
@@ -94,7 +92,7 @@ void main(void)
 	PerformAdditionAndSubtraction();
 
 
-	CLCD_voidGoToRowColumn(3,13);
+	CLCD_voidGoToRowColumn(3,9);
 
 	if(NegativeFlag)
 		CLCD_voidSendData('-');
