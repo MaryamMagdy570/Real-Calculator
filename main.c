@@ -40,6 +40,11 @@
 						NegativeFlag =0;}while(0)
 
 
+#define PRINT() do {for (u8 k = 0 ; k<ExpressionCounter; k++){  	\
+						CLCD_voidSendData(ExpressionArray[k]);}}while(0)
+
+
+
 u8 Button = '\0';
 
 
@@ -61,9 +66,9 @@ u8 NegativeFlags[10];   // for * / operations
 void CleanExpressionAndCheckErrors();
 void GetExpression();
 void TranslateExpression();
-
+void PerformMultiplicationAnDivision();
 void PerformAdditionAndSubtraction();
-
+ u8 flag=0;
 
 void main(void)
 {
@@ -71,51 +76,30 @@ void main(void)
 	CLCD_voidInit();
 
 	INIT_VARS();
-	/*******************************************/
+
 	GetExpression();
-	/*******************************************/
+
+	CLCD_voidGoToRowColumn(1,0);
+	PRINT();
+
 	CleanExpressionAndCheckErrors();
-	/*******************************************/
+
+	CLCD_voidGoToRowColumn(2,0);
+	PRINT();
+
 	TranslateExpression();
-	/*******************************************/
 
-	for(u8 i =0; i<Counter; i++)
-	{
-		if (OperationsArray[i] == '*')
-		{
-			NumbersArray[i] = NumbersArray[i]*NumbersArray[i+1];
-		}
-		else if (OperationsArray[i] == '/')
-		{
-			if (NumbersArray[i+1] == (float)0)
-			{
-				MATHERROR();
-				break;
-			}
-			else
-			{
-				NumbersArray[i] = NumbersArray[i]/NumbersArray[i+1];
-			}
-		}
-		else
-		{
-			continue;
-		}
-		//REARRANGE
-		REARRANGE_ARRAYS(i);
-		i--;
-	}
+	PerformMultiplicationAnDivision();
 
-/*******************************************/
 	PerformAdditionAndSubtraction();
-/*******************************************/
+
 
 	CLCD_voidGoToRowColumn(3,13);
 
-if(NegativeFlag)
-	CLCD_voidSendData('-');
+	if(NegativeFlag)
+		CLCD_voidSendData('-');
 
-CLCD_voidSendDecimalNumber(NumbersArray[0]);
+	CLCD_voidSendDecimalNumber(NumbersArray[0]);
 
 //do not forget to clear operand and numbers
 while(1){}
@@ -139,7 +123,6 @@ void GetExpression()
 
 void CleanExpressionAndCheckErrors()
 {
-
 	if ( ExpressionArray[0] == '*' ||  ExpressionArray[0]== '/')
 		MATHERROR();
 	else if (ExpressionArray[0] == '+')
@@ -147,7 +130,7 @@ void CleanExpressionAndCheckErrors()
 	else if (ExpressionArray[0] == '-')
 	{
 		REARRANGE_EXPRESSION(' ',-1);
-		NegativeFlags[0] = 1;
+		NegativeFlag = 1;
 	}
 
 	for (u8 i = 0; i<=ExpressionCounter; i++)
@@ -181,20 +164,6 @@ void CleanExpressionAndCheckErrors()
 		{
 			REARRANGE_EXPRESSION('/',i);	i--;
 		}
-		//////////////
-		else if (ExpressionArray[i] == '*' && ExpressionArray[i+1] == '-')
-		{
-			REARRANGE_EXPRESSION('*',i);
-			NegativeFlags[i+1] = 1;
-			i--;
-		}
-		else if (ExpressionArray[i] == '/' && ExpressionArray[i+1] == '-')
-		{
-			REARRANGE_EXPRESSION('/',i);
-			NegativeFlags[i+1] = 1;
-			i--;
-		}
-		//////////////
 
 		else if (ExpressionArray[i] == '+' && ExpressionArray[i+1] == '+')
 		{
@@ -235,7 +204,57 @@ void CleanExpressionAndCheckErrors()
 			REARRANGE_EXPRESSION('/',i);	i--;
 		}
 	}
-
+		for(u8 i=0;i<ExpressionCounter; i++)
+		{
+			if (ExpressionArray[i]=='*' && ExpressionArray[i+1] == '-')
+			 {
+				REARRANGE_EXPRESSION('*',i);
+				for (s8 j = i-2; j>=0; j--)
+				{
+					if (ExpressionArray[j] == '+')
+					{
+						ExpressionArray[j] = '-';
+						flag = 1;
+						break;
+					}
+					else if (ExpressionArray[j] == '-')
+					{
+						ExpressionArray[j]  = '+';
+						flag = 1;
+						break;
+					}
+				}
+					if (!flag)
+						NegativeFlag ^= 1;
+					else
+						flag =0;
+				i--;
+			 }
+			else if (ExpressionArray[i] == '/' && ExpressionArray[i+1] == '-')
+			{
+				REARRANGE_EXPRESSION('/',i);
+				for (s8 j = i-2; j>=0; j--)
+				{
+					if (ExpressionArray[j] == '+')
+					{
+						ExpressionArray[j] = '-';
+						flag = 1;
+						break;
+					}
+					else if (ExpressionArray[j] == '-')
+					{
+						ExpressionArray[j]  = '+';
+						flag = 1;
+						break;
+					}
+				}
+					if (!flag)
+						NegativeFlag ^= 1;
+					else
+						flag =0;
+				i--;
+			}
+		}
 }
 
 void TranslateExpression()
@@ -246,8 +265,8 @@ void TranslateExpression()
 		{
 			if(!DecimalFlag)
 			{
-			NumbersArray[Counter] = NumbersArray[Counter] * 10 + (ExpressionArray[i]  - '0');
-			DecimalPlace = 0.1;
+				NumbersArray[Counter] = NumbersArray[Counter] * 10 + (ExpressionArray[i]  - '0');
+				DecimalPlace = 0.1;
 			}
 			else
 			{
@@ -281,6 +300,36 @@ void TranslateExpression()
 		}
 	}
 
+}
+
+void PerformMultiplicationAnDivision()
+{
+	for(u8 i =0; i<Counter; i++)
+	{
+		if (OperationsArray[i] == '*')
+		{
+			NumbersArray[i] = NumbersArray[i]*NumbersArray[i+1];
+		}
+		else if (OperationsArray[i] == '/')
+		{
+			if (NumbersArray[i+1] == (float)0)
+			{
+				MATHERROR();
+				break;
+			}
+			else
+			{
+				NumbersArray[i] = NumbersArray[i]/NumbersArray[i+1];
+			}
+		}
+		else
+		{
+			continue;
+		}
+		//REARRANGE
+		REARRANGE_ARRAYS(i);
+		i--;
+	}
 }
 
 void PerformAdditionAndSubtraction()
