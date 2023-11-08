@@ -11,8 +11,8 @@ it takes user input from a 4x4 keypad and outputs the result on a 4x20 LCD.
   where "++" is treated as "+" , and both "--,+-" are treated as "-".
 - give a "Math Error" message if any invalid repeated symbols else like "//,**,.*,./, ... etc"
 - give a "Math Error" message at division by zero.
-
-
-
+## Video
 https://github.com/MaryamMagdy570/Real-Calculator/assets/82731141/1d1dcbbd-7ba8-441b-94ac-746681c415fb
+## keypad matrix
+![4x4-Keypad-Module-Pinout](https://github.com/MaryamMagdy570/Real-Calculator/assets/82731141/bb498984-255d-441a-a313-da0e0ff385db)
 
