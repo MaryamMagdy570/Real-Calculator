@@ -3,7 +3,8 @@
 A calculator application using ATmega32, 4x4 keypad, and 4X20 character LCD.
 it takes user input from a 4x4 keypad and outputs the result on a 4x20 LCD.
 ## Features
-- Supports the 4 operations "+,-,*,/"
+- Supports the 4 operations "+,-,*,/".
+- Respects the precedence of operations when applying multiple operations in the same expression.
 - Dealing with positive or negative numbers.
 - Dealing with both integer and floating numbers up to 5 decimals after point.
 - handling the repeated symbol like "++,--,+-"
